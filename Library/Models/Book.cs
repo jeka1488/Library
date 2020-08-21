@@ -1,6 +1,4 @@
 ﻿namespace Library.Models
-{
-    namespace Library.Models
     {
         /// <summary>
         /// Book model
@@ -20,4 +18,3 @@
             public Author Author { get; set; }
         }
     }
-}

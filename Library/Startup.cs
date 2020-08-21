@@ -1,13 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using Library.Controllers.Helpers;
+using Library.Data;
+using Library.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace Library
 {
@@ -18,11 +26,38 @@ namespace Library
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public static IConfiguration Configuration { get; set; }
 
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            //Add Identity DBContext (Postgresql)
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
+                    x => x.UseNetTopologySuite()));
+
+
+            //Add custom Identity
+            services.AddIdentity<User, IdentityRole<int>>(options =>
+                    options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddRoles<IdentityRole<int>>();
+
+            services.AddTransient<InitHelper>();
+            
+            //Add api documentation
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Library API", Version = "v1"});
+                c.DescribeAllParametersInCamelCase();
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+            services.AddSwaggerGenNewtonsoftSupport();
+            
             services.AddControllersWithViews();
         }
 
@@ -45,7 +80,13 @@ namespace Library
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Library API"); });
+
 
             app.UseEndpoints(endpoints =>
             {

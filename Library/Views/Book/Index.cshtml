@@ -1,0 +1,48 @@
+﻿@model List<Library.ViewModels.BookVM>
+
+@{
+    ViewBag.Title = "Books";
+    Layout = "_Layout";
+}
+@if (User.IsInRole("admin"))
+{
+  <a class="btn btn-primary" asp-action="Create">
+      Create
+  </a>          
+}
+<table class="table">
+   <thead>
+       <tr>
+         <th>#</th>
+         <th>Title</th>
+         <th>Author</th>
+         @if (User.IsInRole("admin"))
+         {
+           <th>Actions</th>
+         }
+       </tr>
+     </thead>
+   <tbody>
+   @{ int i = 0;}
+   @foreach (var b in Model)
+   {
+     i++;
+     <tr>
+       <th>@i</th>
+       <td>@b.Title</td>
+       <td>@b.Author</td>
+        @if (User.IsInRole("admin"))
+                {
+                  <td>
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@b.Id">
+                      Edit
+                    </a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@b.Id">
+                      Delete
+                    </a>
+                  </td>
+                }
+     </tr>
+   }
+   </tbody>
+</table>

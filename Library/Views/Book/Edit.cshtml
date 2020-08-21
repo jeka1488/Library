@@ -1,0 +1,29 @@
+﻿@model Library.ViewModels.EditBookVM
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "_Layout";
+}
+<div class="card col-12">
+    <div class="card-header">
+        Edit
+    </div>
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="@Model.Id"/>
+        <div class="form-group">
+            <label asp-for="@Model.Title">Title</label>
+            <input type="text" class="form-control" asp-for="@Model.Title">
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.AuthorId">Author</label>
+            <select asp-for="@Model.AuthorId" class="custom-select" asp-items="@(new SelectList(Model.Authors, "Id", "Surname", Model.AuthorId))">
+                <option value="">No selected</option>
+            </select>
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <input class="btn btn-primary col-2" type="submit" value="Save"/>
+            </div>
+        </div>
+    </form>
+</div>

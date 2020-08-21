@@ -1,0 +1,31 @@
+﻿@model Library.ViewModels.AuthorVM
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "_Layout";
+}
+<div class="card col-12">
+    <div class="card-header">
+        Create
+    </div>
+    <form asp-action="Create">
+        <div class="form-group">
+            <label asp-for="@Model.Surname">Surname</label>
+            <input type="text" class="form-control" asp-for="@Model.Surname">
+        </div> 
+        <div class="form-group">
+            <label asp-for="@Model.Name">Name</label>
+            <input type="text" class="form-control" asp-for="@Model.Name">
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Patronymic">Patronymic</label>
+            <input type="text" class="form-control" asp-for="@Model.Patronymic">
+        </div>
+       
+        <div class="card-footer">
+            <div class="form-group">
+                <input class="btn btn-primary col-2" type="submit" value="Create"/>
+            </div>
+        </div>
+    </form>
+</div>
